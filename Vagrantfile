@@ -19,8 +19,12 @@ Vagrant.configure("2") do |config|
       sudo dnf install python3 python3-devel -y
       sudo pip3 install requests qrcode pillow pyyaml
       sudo pip3 install ansible
+      sudo pip3 install scrapy
       mkdir /home/vagrant/dev
       git clone https://github.com/nlog2n2/rice_cooker /home/vagrant/dev/rice_cooker
+      git clone https://github.com/nlog2n2/chopping_board /home/vagrant/dev/chopping_board
+      git config --global user.email "example@example.com"
+      git config --global user.name "Toshihiro Sekiguchi"
     SHELL
   end
 end
