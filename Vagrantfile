@@ -1,32 +1,38 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Vagrant.configure("2") do |config|
-  config.vm.define "aqua-konosuba" do |py|
-    py.vm.box = "centos/8"
-    py.vm.box_url = "https://app.vagrantup.com/centos/boxes/8"
-    py.vm.box_download_insecure = true
-    py.vm.network "private_network", ip: "192.168.1.100"
-    py.vm.hostname = "aqua-konosuba"
+Vagrant.configure("2") do | config |
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/trusty64"
+  config.vm.box_download_insecure = true
 
-    py.vm.provider "virtualbox" do |vb|
+  config.vm.define :server1 do | server1 |
+    server1.vm.network "private_network", ip: "192.168.1.100"
+    server1.vm.network "private_network", ip: "192.168.2.100"
+    server1.vm.network "forwarded_port", guest: 22 , host: 2222
+    server1.vm.hostname = "megumin-konosuba"
+
+    server1.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
+      vb.cpus = "1"
     end
-
-    py.vm.provision "shell", inline: <<-SHELL
-      sudo dnf update -y
-      sudo dnf install vim -y
-      sudo dnf install python3 python3-devel -y
-      sudo pip3 install requests qrcode pillow pyyaml
-      sudo pip3 install ansible
-      sudo pip3 install scrapy
-      mkdir -p /home/vagrant/dev/{rice_cooker,chopping_board,scissor}
-      sudo dnf install git -y
-      git clone https://github.com/nlog2n2/rice_cooker /home/vagrant/dev/rice_cooker
-      git clone https://github.com/nlog2n2/chopping_board /home/vagrant/dev/chopping_board
-      git clone https://github.com/nlog2n2/scissor /home/vagrant/dev/scissor
-      git config --global user.email "example@example.com"
-      git config --global user.name "Toshihiro"
-    SHELL
   end
+
+  config.vm.define :server2 do | server2 |
+    server2.vm.network "private_network", ip: "192.168.1.101"
+    server2.vm.network "private_network", ip: "192.168.2.101"
+    server2.vm.network "forwarded_port", guest: 22 , host: 3322
+    server2.vm.hostname = "darkness-konosuba"
+
+    server2.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = "1"
+    end
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update && apt-get dist-upgrade
+    sudo apt-get install ansible
+  SHELL
+
 end
